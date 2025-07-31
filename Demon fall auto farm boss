@@ -1,0 +1,49 @@
+-- Auto-farm Demon Fall - multi-boss
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local hrp = character:WaitForChild("HumanoidRootPart")
+
+-- Liste des boss à cibler (remplace par les noms exacts dans le jeu)
+local bosses = {
+    "Gyutaro",
+    "Kaigaku",
+    "GreenBoss",
+    "BlueBoss",
+    "SwampDemon",
+    "UpperMoonOne"
+}
+
+local attackCooldown = 1 -- Temps entre chaque attaque (secondes)
+
+local function attack()
+    local vu = game:GetService("VirtualUser")
+    vu:Button1Down(Vector2.new(0, 0))
+    wait(0.1)
+    vu:Button1Up(Vector2.new(0, 0))
+end
+
+local function findBoss()
+    for _, bossName in pairs(bosses) do
+        for _, obj in pairs(workspace:GetDescendants()) do
+            if obj:IsA("Model") and obj.Name == bossName and obj:FindFirstChild("HumanoidRootPart") then
+                return obj
+            end
+        end
+    end
+    return nil
+end
+
+while true do
+    local target = findBoss()
+
+    if target then
+        print("Boss trouvé :", target.Name)
+        hrp.CFrame = target.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3)
+        wait(0.2)
+        attack()
+    else
+        print("Boss non trouvé, recherche en cours...")
+    end
+
+    wait(attackCooldown)
+end
